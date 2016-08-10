@@ -21,7 +21,7 @@ while getopts ':t:l:m' opt; do
       bash "${LIB_PATH}/ec2-metadata.sh" "rancher.environment"
       ;;
     l)
-      bash "${LIB_PATH}/ec2-label-to-env.sh" "${OPTARG}"
+      bash "${LIB_PATH}/ec2-label-to-env.sh" "${AWS_INSTANCE_ID}" "${OPTARG}"
       ;;
     ?)
       echo "Unsupported option -$OPTARG"
