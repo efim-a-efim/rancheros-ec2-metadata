@@ -12,13 +12,16 @@ if [ "${AWS_IAM_ROLE}" ]; then
 fi
 export AWS_INSTANCE_ID=`wget -O- -q "http://169.254.169.254/latest/meta-data/instance-id" 2>/dev/null`
 
-while getopts ':t:m' opt; do
+while getopts ':t:l:m' opt; do
   case "$opt" in
     t)
-      "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${OPTARG}"
+      bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${OPTARG}"
       ;;
     m)
-      "${LIB_PATH}/ec2-metadata.sh" "rancher.environment"
+      bash "${LIB_PATH}/ec2-metadata.sh" "rancher.environment"
+      ;;
+    l)
+      bash "${LIB_PATH}/ec2-label-to-env.sh" "${OPTARG}"
       ;;
     ?)
       echo "Unsupported option -$OPTARG"
@@ -26,7 +29,7 @@ while getopts ':t:m' opt; do
     :)
       case "$OPTARG" in
         t)
-          "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" ''
+          bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" ''
           ;;
         *)
           echo "Argument required for -$OPTARG"
