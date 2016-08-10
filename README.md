@@ -12,7 +12,7 @@ rancher:
   services:
     aws-metadata:
       image: deadroot/rancheros-ec2-metadata
-      command: -m -t 'com.'
+      command: -m -t 'com.' -l 'com.environment:ENVIRONMENT'
       privileged: true
       labels:
         io.rancher.os.after: network
@@ -45,3 +45,4 @@ rancher:
  * AWS_PUBLIC_IPV4
  * AWS_SECURITY_GROUPS
 * `-t [prefix]` - load EC2 instance tags starting with `prefix` and add them as labels to docker daemon options
+* `-l label:variablename` - add `variablename` variable ro RancherOS environment that contains value of `label` tag. May be used multiple times
