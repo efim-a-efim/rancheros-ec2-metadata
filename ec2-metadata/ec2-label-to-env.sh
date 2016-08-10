@@ -8,6 +8,9 @@ if [ -z "${label}" -o -z "${var}" ]; then
   exit 1
 fi
 
+conf_path="rancher.environment.${var}"
+[ "$(echo "$var" | grep '\.')" ] && conf_path="$var"
+
 TAG_VAL=$(aws ec2 describe-tags --region "${AWS_DEFAULT_REGION}" --filters "Name=key,Values=${label}" "Name=resource-id,Values=${INSTANCE}" 2>/dev/null | jq -r -j ".Tags[] | \"\(.Value)\"" 2>/dev/null)
 
-ros config set "rancher.environment.${var}" "${TAG_VAL}"
+ros config set "${conf_path}" "${TAG_VAL}"
