@@ -6,7 +6,7 @@ Intended to use with Autoscaling.
 
 ## How to use
 
-{code}
+```
 #cloud-config
 rancher:
   services:
@@ -22,8 +22,7 @@ rancher:
     volumes:
       - /usr/bin/ros:/bin/ros:ro
       - /var/lib/rancher/conf:/var/lib/rancher/conf:rw
-
-{code}
+```
 
 ### Options:
 * `-m` - put AWS metadata to the Rancher environment vars
