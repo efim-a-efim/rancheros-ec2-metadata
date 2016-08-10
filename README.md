@@ -11,17 +11,17 @@ Intended to use with Autoscaling.
 rancher:
   services:
     aws-metadata:
-    image: deadroot/rancheros-ec2-metadata
-    command: -m -t 'com.'
-    privileged: true
-    labels:
-      io.rancher.os.after: network
-      io.rancher.os.scope: system
-      io.rancher.os.reloadconfig: 'true'
-      io.rancher.os.createonly: 'false'
-    volumes:
-      - /usr/bin/ros:/bin/ros:ro
-      - /var/lib/rancher/conf:/var/lib/rancher/conf:rw
+      image: deadroot/rancheros-ec2-metadata
+      command: -m -t 'com.'
+      privileged: true
+      labels:
+        io.rancher.os.after: network
+        io.rancher.os.scope: system
+        io.rancher.os.reloadconfig: 'true'
+        io.rancher.os.createonly: 'false'
+      volumes:
+        - /usr/bin/ros:/bin/ros:ro
+        - /var/lib/rancher/conf:/var/lib/rancher/conf:rw
 ```
 
 ### Options:
