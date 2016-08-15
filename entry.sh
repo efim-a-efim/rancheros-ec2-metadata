@@ -1,9 +1,5 @@
 #!/bin/bash
 LIB_PATH="/lib/ec2-metadata"
-CONFIG_PATH="/var/lib/rancher/conf/cloud-config.d"
-
-echo '#cloud-config' > "${NEW_CONFIG}"
-echo "rancher:" >> "${NEW_CONFIG}"
 
 # Basic metadata
 export AWS_AVAILABILITY_ZONE="$(wget -O- -q http://169.254.169.254/latest/meta-data/placement/availability-zone 2>/dev/null)"
@@ -19,19 +15,19 @@ export AWS_INSTANCE_ID="$(wget -O- -q "http://169.254.169.254/latest/meta-data/i
 while getopts ':t:l:m' opt; do
   case "$opt" in
     t)
-      NEW_CONFIG=`mktemp -p "${CONFIG_PATH}"`
+      NEW_CONFIG=`mktemp`
       bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${OPTARG}" | sed 's/^/  /' >> "${NEW_CONFIG}"
       bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
       rm "${NEW_CONFIG}"
       ;;
     m)
-      NEW_CONFIG=`mktemp -p "${CONFIG_PATH}"`
+      NEW_CONFIG=`mktemp`
       bash "${LIB_PATH}/ec2-metadata.sh" | sed 's/^/  /' >> "${NEW_CONFIG}"
       bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
       rm "${NEW_CONFIG}"
       ;;
     l)
-      NEW_CONFIG=`mktemp -p "${CONFIG_PATH}"`
+      NEW_CONFIG=`mktemp`
       bash "${LIB_PATH}/ec2-label-to-env.sh" "${AWS_INSTANCE_ID}" "${OPTARG}" | sed 's/^/  /' >> "${NEW_CONFIG}"
       bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
       rm "${NEW_CONFIG}"
