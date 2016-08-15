@@ -8,5 +8,8 @@ ADD ./entry.sh /entry.sh
 ADD ./ec2-metadata /lib/ec2-metadata
 RUN chmod +x /*.sh
 
+ENV AWS_METADATA_LOAD "true"
+ENV AWS_METADATA_TAG_PREFIXES "docker."
+ENV AWS_METADATA_TAG_VARIABLES ""
+
 ENTRYPOINT [ "/entry.sh" ]
-CMD ['-m', '-t', 'com.']
