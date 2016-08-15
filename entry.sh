@@ -18,7 +18,7 @@ while getopts ':t:e:m' opt; do
       bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${OPTARG}"  | ros config merge
       ;;
     m)
-      bash "${LIB_PATH}/ec2-metadata.sh" | sed 's/^/  /' | ros config merge
+      bash "${LIB_PATH}/ec2-metadata.sh" | ros config merge
       ;;
     e)
       bash "${LIB_PATH}/ec2-tag-to-env.sh" "${AWS_INSTANCE_ID}" "${OPTARG}" | ros config merge
