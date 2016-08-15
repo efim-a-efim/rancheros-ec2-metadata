@@ -15,22 +15,13 @@ export AWS_INSTANCE_ID="$(wget -O- -q "http://169.254.169.254/latest/meta-data/i
 while getopts ':t:e:m' opt; do
   case "$opt" in
     t)
-      NEW_CONFIG=`mktemp`
-      bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${OPTARG}" | sed 's/^/  /' >> "${NEW_CONFIG}"
-      bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
-      rm "${NEW_CONFIG}"
+      bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${OPTARG}"  | ros config merge
       ;;
     m)
-      NEW_CONFIG=`mktemp`
-      bash "${LIB_PATH}/ec2-metadata.sh" | sed 's/^/  /' >> "${NEW_CONFIG}"
-      bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
-      rm "${NEW_CONFIG}"
+      bash "${LIB_PATH}/ec2-metadata.sh" | sed 's/^/  /' | ros config merge
       ;;
     e)
-      NEW_CONFIG=`mktemp`
-      bash "${LIB_PATH}/ec2-tag-to-env.sh" "${AWS_INSTANCE_ID}" "${OPTARG}" | sed 's/^/  /' >> "${NEW_CONFIG}"
-      bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
-      rm "${NEW_CONFIG}"
+      bash "${LIB_PATH}/ec2-tag-to-env.sh" "${AWS_INSTANCE_ID}" "${OPTARG}" | ros config merge
       ;;
     ?)
       echo "Unsupported option -$OPTARG"
@@ -38,10 +29,7 @@ while getopts ':t:e:m' opt; do
     :)
       case "$OPTARG" in
         t)
-          NEW_CONFIG=`mktemp`
-          bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" 'docker.' | sed 's/^/  /' >> "${NEW_CONFIG}"
-          ros config merge < "${NEW_CONFIG}"
-          rm "${NEW_CONFIG}"
+          bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" 'docker.' | ros config merge
           ;;
         *)
           echo "Argument required for -$OPTARG"
@@ -53,26 +41,17 @@ done
 shift $((OPTIND-1))
 
 if [ "${AWS_METADATA_LOAD}" = 'true' ]; then
-  NEW_CONFIG=`mktemp`
-  bash "${LIB_PATH}/ec2-metadata.sh" | sed 's/^/  /' >> "${NEW_CONFIG}"
-  bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
-  rm "${NEW_CONFIG}"
+  bash "${LIB_PATH}/ec2-metadata.sh" | ros config merge
 fi
 
 if [ "${AWS_METADATA_TAG_PREFIXES}" ]; then
   echo "${AWS_METADATA_TAG_PREFIXES}" | while read -d ';' tag; do
-    NEW_CONFIG=`mktemp`
-    bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${tag}" | sed 's/^/  /' >> "${NEW_CONFIG}"
-    ros config merge < "${NEW_CONFIG}"
-    rm "${NEW_CONFIG}"
+    bash "${LIB_PATH}/ec2-tags.sh" "${AWS_INSTANCE_ID}" "${tag}" | ros config merge
   done
 fi
 
 if [ "${AWS_METADATA_TAG_VARIABLES}" ]; then
   echo "${AWS_METADATA_TAG_VARIABLES}" | while read -d ';' tag; do
-    NEW_CONFIG=`mktemp`
-    bash "${LIB_PATH}/ec2-tag-to-env.sh" "${AWS_INSTANCE_ID}" "${tag}" | sed 's/^/  /' >> "${NEW_CONFIG}"
-    bash "${LIB_PATH}/set-config.sh" < "${NEW_CONFIG}"
-    rm "${NEW_CONFIG}"
+    bash "${LIB_PATH}/ec2-tag-to-env.sh" "${AWS_INSTANCE_ID}" "${tag}" | ros config merge
   done
 fi
